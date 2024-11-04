@@ -743,7 +743,7 @@ public class Configuration {
       executor = new SimpleExecutor(this, transaction);
     }
     if (cacheEnabled) {
-      executor = new CachingExecutor(executor);
+      executor = new CachingExecutor(executor); // 缓存代理
     }
     return (Executor) interceptorChain.pluginAll(executor);
   }

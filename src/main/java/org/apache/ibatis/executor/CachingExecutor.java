@@ -43,7 +43,7 @@ public class CachingExecutor implements Executor {
 
   public CachingExecutor(Executor delegate) {
     this.delegate = delegate;
-    delegate.setExecutorWrapper(this);
+    delegate.setExecutorWrapper(this); // 双向链表, 互相可见
   }
 
   @Override
@@ -94,7 +94,7 @@ public class CachingExecutor implements Executor {
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler,
       CacheKey key, BoundSql boundSql) throws SQLException {
     Cache cache = ms.getCache();
-    if (cache != null) {
+    if (cache != null) { // 处理二级缓存
       flushCacheIfRequired(ms);
       if (ms.isUseCache() && resultHandler == null) {
         ensureNoOutParams(ms, boundSql);
@@ -168,7 +168,7 @@ public class CachingExecutor implements Executor {
   private void flushCacheIfRequired(MappedStatement ms) {
     Cache cache = ms.getCache();
     if (cache != null && ms.isFlushCacheRequired()) {
-      tcm.clear(cache);
+      tcm.clear(cache); // 清除事务中的缓存
     }
   }
 

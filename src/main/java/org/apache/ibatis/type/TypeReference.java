@@ -37,20 +37,20 @@ public abstract class TypeReference<T> {
   }
 
   Type getSuperclassTypeParameter(Class<?> clazz) {
-    Type genericSuperclass = clazz.getGenericSuperclass();
-    if (genericSuperclass instanceof Class) {
+    Type genericSuperclass = clazz.getGenericSuperclass(); // 子类向上查找
+    if (genericSuperclass instanceof Class) { // 如果是普通类型
       // try to climb up the hierarchy until meet something useful
       if (TypeReference.class != genericSuperclass) {
-        return getSuperclassTypeParameter(clazz.getSuperclass());
+        return getSuperclassTypeParameter(clazz.getSuperclass()); // 继续向上查找
       }
-
+      // 如果找到TypeReference的时候还是只有普通类, 说明子类没有显示声明泛型T, 抛出异常
       throw new TypeException("'" + getClass() + "' extends TypeReference but misses the type parameter. "
           + "Remove the extension or add a type parameter to it.");
     }
 
-    Type rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+    Type rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0]; // 找到了泛型声明
     // TODO remove this when Reflector is fixed to return Types
-    if (rawType instanceof ParameterizedType) {
+    if (rawType instanceof ParameterizedType) { // 如果泛型T自身具有一个泛型, 则视之为包装类型, 以其内部的T为准
       rawType = ((ParameterizedType) rawType).getRawType();
     }
 

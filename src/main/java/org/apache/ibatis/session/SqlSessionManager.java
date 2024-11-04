@@ -342,7 +342,7 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-      final SqlSession sqlSession = SqlSessionManager.this.localSqlSession.get();
+      final SqlSession sqlSession = SqlSessionManager.this.localSqlSession.get(); // 一个线程内的共用sqlSession
       if (sqlSession != null) {
         try {
           return method.invoke(sqlSession, args);

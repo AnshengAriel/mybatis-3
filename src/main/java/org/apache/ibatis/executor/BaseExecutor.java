@@ -146,10 +146,10 @@ public abstract class BaseExecutor implements Executor {
       throw new ExecutorException("Executor was closed.");
     }
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
-      clearLocalCache();
+      clearLocalCache(); // 默认每次查询都会清除一级缓存
     }
     List<E> list;
-    try {
+    try { // 处理一级缓存
       queryStack++;
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
@@ -166,9 +166,9 @@ public abstract class BaseExecutor implements Executor {
       }
       // issue #601
       deferredLoads.clear();
-      if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
+      if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) { // 默认是session
         // issue #482
-        clearLocalCache();
+        clearLocalCache(); // 清除一级缓存
       }
     }
     return list;
@@ -331,7 +331,7 @@ public abstract class BaseExecutor implements Executor {
   private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds,
       ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     List<E> list;
-    localCache.putObject(key, EXECUTION_PLACEHOLDER);
+    localCache.putObject(key, EXECUTION_PLACEHOLDER); // 一级缓存
     try {
       list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
     } finally {

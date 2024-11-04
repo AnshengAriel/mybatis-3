@@ -49,7 +49,7 @@ public interface Executor {
   void commit(boolean required) throws SQLException;
 
   void rollback(boolean required) throws SQLException;
-
+  // 缓存键, 决定了缓存的颗粒度
   CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql);
 
   boolean isCached(MappedStatement ms, CacheKey key);
